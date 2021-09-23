@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'com.corizance'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+//dependencies {
+//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+//}
+
+test {
+    useJUnitPlatform()
+}
+
+application {
+    mainClassName = "com.corizance.client.Client"
+}
+
+dependencies {
+    implementation "com.r3.conclave:conclave-client:$conclaveVersion"
+}
+
+task runClient(type: JavaExec, dependsOn: assemble) {
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    main = 'com.corizance.client.Client'
+}

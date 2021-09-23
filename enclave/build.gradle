@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+    id 'com.r3.conclave.enclave'
+}
+
+group 'com.corizance'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+//dependencies {
+//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+//}
+
+test {
+    useJUnitPlatform()
+}
+
+
+//dependencies {
+//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+//}
+
+dependencies {
+    implementation "com.r3.conclave:conclave-enclave"
+//    testImplementation "com.r3.conclave:conclave-testing"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.6.0"
+}
+
+conclave {
+    productID = 1
+    revocationLevel = 0
+
+    // For simulation, we want to use the default signing type of dummyKey so
+    // we do not need to specify a configuration.
+
+    debug {
+        signingType = privateKey
+        signingKey = file("../signing/sample_private_key.pem")
+    }
+
+    release {
+        // To protect our release private key with an HSM, the enclave needs to be built in stages.
+        // Firstly, build the signing material:
+        //  ./gradlew prepareForSigning -PenclaveMode="Release"
+        //
+        // Generate a signature from the signing material.
+        //
+        // Finally build the signed enclave:
+        //  ./gradlew build -PenclaveMode="Release"
+        //
+        signingType = externalKey
+        signatureDate = new Date(1970, 0, 1)
+        mrsignerSignature = file("../signing/signature.bin")
+        mrsignerPublicKey = file("../signing/external_signing_public.pem")
+    }
+
+    runtime = graalvm_native_image
+}
