@@ -29,7 +29,7 @@ public class Client {
         fromHost.readFully(attestationBytes);
         EnclaveInstanceInfo attestation = EnclaveInstanceInfo.deserialize(attestationBytes);
         // Check it's the enclave we expect. This will throw InvalidEnclaveException if not valid.
-        EnclaveConstraint.parse("S:B2121C9BD35781A12946415FB774D6059C53164DBC5644E045DE6C7ED84257C5 PROD:1 SEC:INSECURE").check(attestation);
+        EnclaveConstraint.parse("S:0000000000000000000000000000000000000000000000000000000000000000 PROD:1 SEC:INSECURE").check(attestation);
         PrivateKey myKey = Curve25519PrivateKey.random();
         PostOffice postOffice = attestation.createPostOffice(myKey, "reverse");
         byte[] encryptedMail = postOffice.encryptMail(toReverse.getBytes(StandardCharsets.UTF_8));
